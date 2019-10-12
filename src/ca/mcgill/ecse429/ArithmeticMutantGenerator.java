@@ -73,13 +73,10 @@ public class ArithmeticMutantGenerator {
             //check for + - * / operators
             for (char op : ops) {
                 if (op == charStr[i]) {
-                    //handle the inc/decrement: "variable++" or "++variable" kind
-                    //of operator found in many languages, so that a mutant is created only ONCE for it.
-                    // (+ appear twice in ++, creating the mutant "var+-" makes no sense)
-//                    if (i > 0 && op == charStr[i-1]) {
-//                        //ignore the second + in ++ or second - in --
-//                        break;
-//                    }
+
+                    /*handle the inc/decrement: "variable++" or "++variable" kind
+                      of operator found in many languages, so that a mutant is created only ONCE for it.
+                      (+ appear twice in ++, creating the mutant "var+-" makes no sense)*/
 
                     //this handles the first + in ++ or first - in --
                     if (charStr[i+1] == charStr[i]) {
