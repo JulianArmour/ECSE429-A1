@@ -3,14 +3,18 @@ package ca.mcgill.ecse429;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ArithmeticMutantGenerator {
     // to keep track of the + - * / operators
     private static Map<String, Integer> operatorCount = new HashMap<>();
 
+    private static Logger logger = Logger.getLogger(ArithmeticMutantGenerator.class.getName());
+
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println("Invalid number of arguments");
+            logger.log(Level.SEVERE, "Invalid number of arguments");
             System.exit(-1);
         }
 
@@ -20,40 +24,29 @@ public class ArithmeticMutantGenerator {
         String programPath = args[0];
         String mutantLibraryPath = args[1];
 
-        BufferedReader reader = null;
-        PrintWriter writer = null;
-        try {
-            reader = new BufferedReader(new FileReader(programPath));
-            writer = new PrintWriter(new BufferedWriter(new FileWriter(mutantLibraryPath)));
+        //try-with-resource
+        try (BufferedReader reader = new BufferedReader(new FileReader(programPath));
+             PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(mutantLibraryPath)))) {
 
             String line;
             int lineNumber = 0;
+
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                if(writeMutants(line.trim(), lineNumber, writer, operatorCount)) {
+                if (writeMutants(line.trim(), lineNumber, writer, operatorCount)) {
                     writer.println();
                 }
             }
 
             // write the count of each operator mutation
             writer.println("----------Total Mutants----------");
-            for (String op : new String[] {"+", "-", "*", "/"}) {
+            for (String op : new String[]{"+", "-", "*", "/"}) {
                 writer.println(op + " mutant count: " + operatorCount.get(op));
             }
 
-
         } catch (IOException e) {
-            System.out.println("Could not generate mutant file");
+            logger.log(Level.SEVERE, "Could not create mutant library file");
             System.exit(-2);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    //ignore
-                }
-            }
-            if (writer != null) writer.close();
         }
     }
 
