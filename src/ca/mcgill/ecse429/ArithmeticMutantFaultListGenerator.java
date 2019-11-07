@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ArithmeticMutantGenerator {
-    // to keep track of the + - * / operators
+public class ArithmeticMutantFaultListGenerator {
+    // to keep track of the + - * / mutant operators that are created
     private static Map<String, Integer> operatorCount = new HashMap<>();
 
-    private static Logger logger = Logger.getLogger(ArithmeticMutantGenerator.class.getName());
+    private static Logger logger = Logger.getLogger(ArithmeticMutantFaultListGenerator.class.getName());
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -45,9 +45,12 @@ public class ArithmeticMutantGenerator {
             }
 
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Could not create mutant library file");
+            logger.log(Level.SEVERE, "Could not create mutant library file.\n" +
+                    "Please ensure the source file path is correct and none of the files are opened.");
             System.exit(-2);
         }
+
+        logger.log(Level.INFO, "Mutant library file creation successful");
     }
 
     /**
