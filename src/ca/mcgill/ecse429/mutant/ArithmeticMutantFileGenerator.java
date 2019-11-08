@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class ArithmeticMutantFileGenerator {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        String sourceCodePath = args[0];
+        String sourceCodePath = args[0];//the actual source code file that mutants are generated from
         String sourceCodeFileName = FileSystems.getDefault().getPath(sourceCodePath).getFileName().toString();
         String mutantFaultListPath = args[1];
         String mutantOutputDirectoryPath = args[2];
@@ -29,6 +29,7 @@ public class ArithmeticMutantFileGenerator {
         SourceCode originalSource = importSourceCode(sourceCodePath);
         List<Mutant> mutants = importMutants(mutantFaultListPath);
 
+        //Writing many mutated files can be done in parallel. Which is good since there can be a lot of mutants.
         List<Thread> mutantFileWriters = new LinkedList<>();
         for (Mutant mutant : mutants) {
             MutantFileWriter mutantFileWriter = new MutantFileWriter(
@@ -43,6 +44,12 @@ public class ArithmeticMutantFileGenerator {
         }
     }
 
+    /**
+     *
+     * @param sourceCodePath a path to a source code file.
+     * @return a {@link SourceCode} object representing the source code.
+     * @throws IOException if the file cannot be read.
+     */
     private static SourceCode importSourceCode(String sourceCodePath) throws IOException {
         SourceCode src = new SourceCode();
         try (BufferedReader reader = new BufferedReader(new FileReader(sourceCodePath))) {
@@ -54,7 +61,15 @@ public class ArithmeticMutantFileGenerator {
         return src;
     }
 
+    /**
+     *
+     * @param pathToMutantFaultList a path to a Mutant Fault List in the format
+     *                              output by {@link ca.mcgill.ecse429.ArithmeticMutantFaultListGenerator}.
+     * @return a {@link List} of {@link Mutant} objects.
+     * @throws IOException if the Mutant Fault List cannot be read.
+     */
     private static List<Mutant> importMutants(String pathToMutantFaultList) throws IOException{
+        //regex patterns for parsing out mutant data
         Pattern mutantLinePat = Pattern.compile("Line (\\d+): .+;");
         Pattern mutantPat = Pattern.compile(" {4}.+;");
         List<Mutant> mutants = new ArrayList<>();
