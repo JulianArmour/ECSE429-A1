@@ -3,6 +3,9 @@ package ca.mcgill.ecse429.mutant;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -11,15 +14,32 @@ import java.util.regex.Pattern;
 public class ArithmeticMutantFileGenerator {
 
     public static void main(String[] args) throws IOException {
-        System.out.println(importMutants("C:\\Users\\Julian\\Desktop\\mutant-list.txt"));
+        String sourceCodePath = args[0];
+        String sourceCodeFileName = FileSystems.getDefault().getPath(sourceCodePath).getFileName().toString();
+        String mutantFaultListPath = args[1];
+        String mutantOutputDirectoryPath = args[2];
+
+        //create the output directory for the mutants if it doesn't already exist
+        Path mutantOutputDirectory = FileSystems.getDefault().getPath(mutantOutputDirectoryPath);
+        if (!mutantOutputDirectory.toFile().exists()) {
+            Files.createDirectory(mutantOutputDirectory);
+        }
+
+        SourceCode originalSource = importSourceCode(sourceCodePath);
+        List<Mutant> mutants = importMutants(mutantFaultListPath);
+
+        for (Mutant mutant : mutants) {
+            (new MutantFileWriter(mutant, originalSource))
+                    .writeMutantFile(mutantOutputDirectoryPath, sourceCodeFileName);
+        }
     }
 
-    public static SourceCode importSourceCode(String pathToSource) throws IOException {
+    public static SourceCode importSourceCode(String sourceCodePath) throws IOException {
         SourceCode src = new SourceCode();
-        try (BufferedReader reader = new BufferedReader(new FileReader(pathToSource))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(sourceCodePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                src.appendLine(line);
+                src.append(line);
             }
         }
         return src;
@@ -30,8 +50,8 @@ public class ArithmeticMutantFileGenerator {
         Pattern mutantPat = Pattern.compile(" {4}.+;");
         List<Mutant> mutants = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(pathToMutantFaultList))) {
-            int originalCodeLineNumber = 0;//the line on which the mutant resides in the original source
-            String originalCodeLine = "";//the line of code at mutantLineNumber in the original source
+            int originalCodeLineNumber = 0;//the line number in the original source for which a mutant can be inserted
+            String originalCodeLine = "";//the line of code at originalCodeLineNumber in the original source
             int mutantId = 0;//id := the Nth mutant generated for a given mutantLine
 
             String line;
@@ -43,9 +63,10 @@ public class ArithmeticMutantFileGenerator {
                 if (lineMatcher.matches()) {
                     originalCodeLineNumber = Integer.parseInt(lineMatcher.group(1));
                     originalCodeLine = lineMatcher.group(2);
+                    mutantId = 0;
                 } else if (mutantMatcher.matches()) {
                     Mutant mutant = new Mutant(
-                            originalCodeLineNumber, mutantId, originalCodeLine, mutantMatcher.group().trim());
+                            originalCodeLineNumber, mutantId++, mutantMatcher.group().trim());
                     mutants.add(mutant);
                 }
             }

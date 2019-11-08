@@ -3,14 +3,19 @@ package ca.mcgill.ecse429.mutant;
 public class Mutant {
     private int lineNumber;
     private int id;
-    private String originalLine;
     private String mutantLine;
 
-    public Mutant(int lineNumber, int id, String originalLine, String mutantLine) {
+    public Mutant(int lineNumber, int id, String mutantLine) {
         this.lineNumber = lineNumber;
         this.id = id;
-        this.originalLine = originalLine;
         this.mutantLine = mutantLine;
+    }
+
+    public void injectInto(SourceCode sourceCode) {
+        String originalLine = sourceCode.getLine(lineNumber);
+        //insert the mutant while preserving tabulation
+        String mutatedLine = originalLine.replace(originalLine.trim(), mutantLine);
+        sourceCode.replaceLine(lineNumber, mutatedLine);
     }
 
     public int getLineNumber() {
@@ -19,10 +24,6 @@ public class Mutant {
 
     public int getId() {
         return id;
-    }
-
-    public String getOriginalLine() {
-        return originalLine;
     }
 
     public String getMutantLine() {
@@ -34,7 +35,6 @@ public class Mutant {
         return "Mutant{" +
                 "lineNumber=" + lineNumber +
                 ", id=" + id +
-                ", originalLine='" + originalLine + '\'' +
                 ", mutantLine='" + mutantLine + '\'' +
                 '}';
     }
