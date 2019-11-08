@@ -5,29 +5,25 @@ public class Mutant {
     private int id;
     private String mutantLine;
 
-    public Mutant(int lineNumber, int id, String mutantLine) {
+    Mutant(int lineNumber, int id, String mutantLine) {
         this.lineNumber = lineNumber;
         this.id = id;
         this.mutantLine = mutantLine;
     }
 
-    public void injectInto(SourceCode sourceCode) {
+    void injectInto(SourceCode sourceCode) {
         String originalLine = sourceCode.getLine(lineNumber);
         //insert the mutant while preserving tabulation
         String mutatedLine = originalLine.replace(originalLine.trim(), mutantLine);
         sourceCode.replaceLine(lineNumber, mutatedLine);
     }
 
-    public int getLineNumber() {
+    int getLineNumber() {
         return lineNumber;
     }
 
-    public int getId() {
+    int getId() {
         return id;
-    }
-
-    public String getMutantLine() {
-        return mutantLine;
     }
 
     @Override

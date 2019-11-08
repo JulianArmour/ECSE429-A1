@@ -1,6 +1,7 @@
 package ca.mcgill.ecse429.mutant;
 
 import java.io.FileOutputStream;
+import java.nio.file.FileSystems;
 
 public class MutantFileWriter implements Runnable {
     private Mutant mutant;
@@ -21,12 +22,12 @@ public class MutantFileWriter implements Runnable {
         this.mutant.injectInto(infectedSource);
         String infectedSourceStr = infectedSource.toString();
 
-        String outputFile = folderPath + mutantFileBaseName + "Line-" + mutant.getLineNumber() + "-Id-" + mutant.getId();
+        String outputFile = folderPath + FileSystems.getDefault().getSeparator() + "Line-" + mutant.getLineNumber() +
+                "-Mutant-" + mutant.getId() + "-" + mutantFileBaseName;
         try (FileOutputStream output = new FileOutputStream(outputFile)) {
             output.write(infectedSourceStr.getBytes());
         } catch (Exception e) {
             System.out.println("Could not create mutant " + mutant);
         }
-
     }
 }

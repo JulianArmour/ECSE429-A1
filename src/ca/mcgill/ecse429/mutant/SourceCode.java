@@ -1,13 +1,12 @@
 package ca.mcgill.ecse429.mutant;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SourceCode {
     private List<String> lines;
 
-    public SourceCode() {
+    SourceCode() {
         this.lines = new ArrayList<>();
     }
 
@@ -18,7 +17,7 @@ public class SourceCode {
     /**
      * @return a copy of this SourceCode object
      */
-    public SourceCode copy() {
+    SourceCode copy() {
         return new SourceCode(new ArrayList<>(this.lines));
     }
 
@@ -26,12 +25,12 @@ public class SourceCode {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (String line: lines) {
-            stringBuilder.append(line);
+            stringBuilder.append(line).append("\n");
         }
         return stringBuilder.toString();
     }
 
-    public void append(String lineOfCode) {
+    void append(String lineOfCode) {
         this.lines.add(lineOfCode);
     }
 
@@ -40,7 +39,7 @@ public class SourceCode {
      * @param lineNumber the line in the source code to replace the existing line with newLine.
      * @param newLine the new line of code to replace the existing one.
      */
-    public void replaceLine(int lineNumber, String newLine) {
+    void replaceLine(int lineNumber, String newLine) {
         this.lines.set(lineNumber - 1, newLine);
     }
 
@@ -49,7 +48,7 @@ public class SourceCode {
      * @param lineNumber the line number for which to return the line of code.
      * @return the line of code at lineNumber. Note that the first line of code is at lineNumber = 1.
      */
-    public String getLine(int lineNumber) {
+    String getLine(int lineNumber) {
         return lines.get(lineNumber - 1);
     }
 }

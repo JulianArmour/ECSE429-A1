@@ -43,7 +43,7 @@ public class ArithmeticMutantFileGenerator {
         }
     }
 
-    public static SourceCode importSourceCode(String sourceCodePath) throws IOException {
+    private static SourceCode importSourceCode(String sourceCodePath) throws IOException {
         SourceCode src = new SourceCode();
         try (BufferedReader reader = new BufferedReader(new FileReader(sourceCodePath))) {
             String line;
@@ -55,13 +55,12 @@ public class ArithmeticMutantFileGenerator {
     }
 
     private static List<Mutant> importMutants(String pathToMutantFaultList) throws IOException{
-        Pattern mutantLinePat = Pattern.compile("Line (\\d+): (.+;)");
+        Pattern mutantLinePat = Pattern.compile("Line (\\d+): .+;");
         Pattern mutantPat = Pattern.compile(" {4}.+;");
         List<Mutant> mutants = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(pathToMutantFaultList))) {
-            int originalCodeLineNumber = 0;//the line number in the original source for which a mutant can be inserted
-            String originalCodeLine = "";//the line of code at originalCodeLineNumber in the original source
-            int mutantId = 0;//id := the Nth mutant generated for a given mutantLine
+            int mutantLineNumber = 0;//the line number in the original source for which a mutant can be inserted
+            int mutantId = 0;//id := the Nth mutant generated for a given mutantLineNumber
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -70,12 +69,11 @@ public class ArithmeticMutantFileGenerator {
                 //mutantMatcher pattern-matches when a mutant is read
                 Matcher mutantMatcher = mutantPat.matcher(line);
                 if (lineMatcher.matches()) {
-                    originalCodeLineNumber = Integer.parseInt(lineMatcher.group(1));
-                    originalCodeLine = lineMatcher.group(2);
+                    mutantLineNumber = Integer.parseInt(lineMatcher.group(1));
                     mutantId = 0;
                 } else if (mutantMatcher.matches()) {
                     Mutant mutant = new Mutant(
-                            originalCodeLineNumber, mutantId++, mutantMatcher.group().trim());
+                            mutantLineNumber, mutantId++, mutantMatcher.group().trim());
                     mutants.add(mutant);
                 }
             }
