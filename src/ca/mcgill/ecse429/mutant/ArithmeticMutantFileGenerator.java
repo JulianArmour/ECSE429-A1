@@ -7,13 +7,14 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ArithmeticMutantFileGenerator {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         String sourceCodePath = args[0];
         String sourceCodeFileName = FileSystems.getDefault().getPath(sourceCodePath).getFileName().toString();
         String mutantFaultListPath = args[1];
@@ -28,9 +29,17 @@ public class ArithmeticMutantFileGenerator {
         SourceCode originalSource = importSourceCode(sourceCodePath);
         List<Mutant> mutants = importMutants(mutantFaultListPath);
 
+        List<Thread> mutantFileWriters = new LinkedList<>();
         for (Mutant mutant : mutants) {
-            (new MutantFileWriter(mutant, originalSource))
-                    .writeMutantFile(mutantOutputDirectoryPath, sourceCodeFileName);
+            MutantFileWriter mutantFileWriter = new MutantFileWriter(
+                    mutant, originalSource, mutantOutputDirectoryPath, sourceCodeFileName);
+
+            Thread mutantFileWriterThread = new Thread(mutantFileWriter);
+            mutantFileWriters.add(mutantFileWriterThread);
+            mutantFileWriterThread.start();
+        }
+        for (Thread mutantFileWriter : mutantFileWriters) {
+            mutantFileWriter.join();
         }
     }
 
