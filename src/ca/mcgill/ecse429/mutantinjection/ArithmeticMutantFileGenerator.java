@@ -1,4 +1,6 @@
-package ca.mcgill.ecse429.mutant;
+package ca.mcgill.ecse429.mutantinjection;
+
+import ca.mcgill.ecse429.mutantgeneration.ArithmeticMutantFaultListGenerator;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -64,7 +66,7 @@ public class ArithmeticMutantFileGenerator {
     /**
      *
      * @param pathToMutantFaultList a path to a Mutant Fault List in the format
-     *                              output by {@link ca.mcgill.ecse429.ArithmeticMutantFaultListGenerator}.
+     *                              output by {@link ArithmeticMutantFaultListGenerator}.
      * @return a {@link List} of {@link Mutant} objects.
      * @throws IOException if the Mutant Fault List cannot be read.
      */

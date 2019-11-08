@@ -1,4 +1,4 @@
-package ca.mcgill.ecse429;
+package ca.mcgill.ecse429.mutantgeneration;
 
 import java.io.*;
 import java.util.HashMap;

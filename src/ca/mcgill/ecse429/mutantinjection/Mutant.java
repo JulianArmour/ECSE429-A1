@@ -1,4 +1,4 @@
-package ca.mcgill.ecse429.mutant;
+package ca.mcgill.ecse429.mutantinjection;
 
 /**
  * An object representing a software mutant. It can be injected into a {@link SourceCode}.

@@ -1,4 +1,4 @@
-package ca.mcgill.ecse429.mutant;
+package ca.mcgill.ecse429.mutantinjection;
 
 import java.io.FileOutputStream;
 import java.nio.file.FileSystems;
