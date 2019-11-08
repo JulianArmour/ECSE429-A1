@@ -2,12 +2,15 @@ package ca.mcgill.ecse429.mutant;
 
 import java.io.FileOutputStream;
 import java.nio.file.FileSystems;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MutantFileWriter implements Runnable {
     private Mutant mutant;
     private SourceCode originalSourceCode;
     private String folderPath;
     private String mutantFileBaseName;
+    private Logger logger = Logger.getLogger(MutantFileWriter.class.getName());
 
     MutantFileWriter(Mutant mutant, SourceCode originalSourceCode, String folderPath, String mutantFileBaseName) {
         this.mutant = mutant;
@@ -27,7 +30,7 @@ public class MutantFileWriter implements Runnable {
         try (FileOutputStream output = new FileOutputStream(outputFile)) {
             output.write(infectedSourceStr.getBytes());
         } catch (Exception e) {
-            System.out.println("Could not create mutant " + mutant);
+            logger.log(Level.SEVERE, "Could not create mutant file for " + mutant);
         }
     }
 }
